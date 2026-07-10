@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architecture — Codex of Colour</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Source+Sans+3:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="parchment" aria-hidden="true"></div>
+    <svg class="sketch-ornament sketch-ornament--left" viewBox="0 0 160 280" aria-hidden="true">
+      <circle cx="78" cy="90" r="52" fill="none" stroke="currentColor" stroke-width="1.1" />
+      <rect x="36" y="38" width="84" height="104" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <line x1="78" y1="28" x2="78" y2="152" stroke="currentColor" stroke-width="0.7" />
+      <line x1="26" y1="90" x2="130" y2="90" stroke="currentColor" stroke-width="0.7" />
+      <path
+        d="M48 188c8-18 22-28 38-28s28 12 34 30c-10 8-22 14-36 14s-26-6-36-16z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+      />
+      <path d="M62 210c6 18 14 34 18 52" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <path d="M96 210c-4 16-8 34-6 52" fill="none" stroke="currentColor" stroke-width="0.9" />
+    </svg>
+    <svg class="sketch-ornament sketch-ornament--right" viewBox="0 0 140 240" aria-hidden="true">
+      <path
+        d="M20 40c30 8 48 34 52 70 4 30-8 58-34 74"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.1"
+      />
+      <path d="M72 30c8 18 10 40 4 62" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <circle cx="74" cy="28" r="4" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <path d="M18 170h90M28 186h70M38 202h50" stroke="currentColor" stroke-width="0.7" />
+    </svg>
+
+    <div class="page page--docs">
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html">Studio</a>
+        <a href="architecture.html" aria-current="page">Architecture</a>
+      </nav>
+
+      <header class="header">
+        <p class="folio">Folio II · The Measuring of Things</p>
+        <h1 class="brand">Architecture</h1>
+        <p class="tagline">
+          How the studio turns a picture into pigment studies — the method, the papers, and the path
+          from file to palette.
+        </p>
+        <div class="rule" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </header>
+
+      <nav class="toc" aria-label="On this page">
+        <a href="#algorithm">I. The algorithm</a>
+        <a href="#structure">II. Files &amp; functions</a>
+        <a href="#data-flow">III. Data flow</a>
+      </nav>
+
+      <main class="docs">
+        <section id="algorithm" class="doc-section">
+          <p class="section-label">Chapter I</p>
+          <h2>The algorithm, in plain words</h2>
+          <p>
+            Imagine spilling every tiny colored speck from your photo onto a table. Each speck is a
+            pixel with a little bit of red, green, and blue mixed in — like three dials on a paint
+            mixer.
+          </p>
+
+          <figure class="diagram">
+            <svg viewBox="0 0 640 220" role="img" aria-labelledby="diag-pixel-title diag-pixel-desc">
+              <title id="diag-pixel-title">A pixel as three paint dials</title>
+              <desc id="diag-pixel-desc">
+                One pixel square connected to red, green, and blue dials that mix into a color point
+                on a table of many points.
+              </desc>
+              <defs>
+                <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#2a2118" />
+                </marker>
+              </defs>
+              <rect x="24" y="48" width="72" height="72" fill="#c45c4a" stroke="#2a2118" stroke-width="1.5" />
+              <text x="60" y="140" text-anchor="middle" class="diagram-label">One pixel</text>
+
+              <path d="M104 84 H150" stroke="#2a2118" stroke-width="1.2" fill="none" marker-end="url(#arrow)" />
+
+              <g transform="translate(170,30)">
+                <circle cx="28" cy="28" r="26" fill="none" stroke="#2a2118" stroke-width="1.2" />
+                <line x1="28" y1="28" x2="28" y2="8" stroke="#8a2f2f" stroke-width="2.5" stroke-linecap="round" />
+                <text x="28" y="70" text-anchor="middle" class="diagram-note">R</text>
+              </g>
+              <g transform="translate(240,30)">
+                <circle cx="28" cy="28" r="26" fill="none" stroke="#2a2118" stroke-width="1.2" />
+                <line x1="28" y1="28" x2="42" y2="14" stroke="#3d6b3d" stroke-width="2.5" stroke-linecap="round" />
+                <text x="28" y="70" text-anchor="middle" class="diagram-note">G</text>
+              </g>
+              <g transform="translate(310,30)">
+                <circle cx="28" cy="28" r="26" fill="none" stroke="#2a2118" stroke-width="1.2" />
+                <line x1="28" y1="28" x2="18" y2="12" stroke="#2f4a7a" stroke-width="2.5" stroke-linecap="round" />
+                <text x="28" y="70" text-anchor="middle" class="diagram-note">B</text>
+              </g>
+
+              <path d="M390 58 H430" stroke="#2a2118" stroke-width="1.2" fill="none" />
+              <polygon points="430,54 442,58 430,62" fill="#2a2118" />
+
+              <g transform="translate(460,20)">
+                <rect x="0" y="0" width="150" height="120" fill="none" stroke="#2a2118" stroke-width="1" opacity="0.4" rx="8" />
+                <circle cx="30" cy="28" r="5" fill="#c45c4a" stroke="#2a2118" stroke-width="0.6" />
+                <circle cx="70" cy="40" r="5" fill="#6b8f5a" stroke="#2a2118" stroke-width="0.6" />
+                <circle cx="110" cy="24" r="5" fill="#4a6fa5" stroke="#2a2118" stroke-width="0.6" />
+                <circle cx="48" cy="70" r="5" fill="#d4a84b" stroke="#2a2118" stroke-width="0.6" />
+                <circle cx="95" cy="75" r="5" fill="#8a5a32" stroke="#2a2118" stroke-width="0.6" />
+                <circle cx="28" cy="95" r="5" fill="#5c4a38" stroke="#2a2118" stroke-width="0.6" />
+                <circle cx="120" cy="100" r="5" fill="#e8dcc4" stroke="#2a2118" stroke-width="0.6" />
+                <circle cx="75" cy="100" r="5" fill="#2a2118" stroke="#2a2118" stroke-width="0.6" />
+              </g>
+              <text x="535" y="160" text-anchor="middle" class="diagram-label">Cloud of color points</text>
+              <text x="320" y="200" text-anchor="middle" class="diagram-caption">
+                Each pixel = a mix of R, G, B → one point on the table
+              </text>
+            </svg>
+            <figcaption>Fig. 1 — Pixels as paint dials, spilled into a color cloud.</figcaption>
+          </figure>
+
+          <p>
+            We do not need every speck. First we shrink the picture (about 120 pixels on the long
+            side) so the work stays quick. Nearly see-through pixels are set aside. What remains is
+            a cloud of color points.
+          </p>
+
+          <figure class="diagram">
+            <svg viewBox="0 0 640 180" role="img" aria-labelledby="diag-shrink-title">
+              <title id="diag-shrink-title">Shrinking the image before sampling</title>
+              <rect x="40" y="30" width="160" height="110" fill="none" stroke="#2a2118" stroke-width="1.5" />
+              <line x1="40" y1="55" x2="200" y2="55" stroke="#2a2118" stroke-width="0.5" opacity="0.35" />
+              <line x1="40" y1="80" x2="200" y2="80" stroke="#2a2118" stroke-width="0.5" opacity="0.35" />
+              <line x1="40" y1="105" x2="200" y2="105" stroke="#2a2118" stroke-width="0.5" opacity="0.35" />
+              <line x1="80" y1="30" x2="80" y2="140" stroke="#2a2118" stroke-width="0.5" opacity="0.35" />
+              <line x1="120" y1="30" x2="120" y2="140" stroke="#2a2118" stroke-width="0.5" opacity="0.35" />
+              <line x1="160" y1="30" x2="160" y2="140" stroke="#2a2118" stroke-width="0.5" opacity="0.35" />
+              <text x="120" y="160" text-anchor="middle" class="diagram-label">Full image</text>
+
+              <path d="M230 85 H290" stroke="#2a2118" stroke-width="1.3" fill="none" />
+              <polygon points="290,81 302,85 290,89" fill="#2a2118" />
+              <text x="266" y="72" text-anchor="middle" class="diagram-note">shrink</text>
+
+              <rect x="330" y="55" width="70" height="55" fill="none" stroke="#2a2118" stroke-width="1.5" />
+              <line x1="330" y1="73" x2="400" y2="73" stroke="#2a2118" stroke-width="0.5" opacity="0.4" />
+              <line x1="330" y1="91" x2="400" y2="91" stroke="#2a2118" stroke-width="0.5" opacity="0.4" />
+              <line x1="353" y1="55" x2="353" y2="110" stroke="#2a2118" stroke-width="0.5" opacity="0.4" />
+              <line x1="376" y1="55" x2="376" y2="110" stroke="#2a2118" stroke-width="0.5" opacity="0.4" />
+              <text x="365" y="140" text-anchor="middle" class="diagram-label">~120px</text>
+
+              <path d="M430 85 H480" stroke="#2a2118" stroke-width="1.3" fill="none" />
+              <polygon points="480,81 492,85 480,89" fill="#2a2118" />
+
+              <g transform="translate(510,50)">
+                <circle cx="12" cy="12" r="4" fill="#c45c4a" stroke="#2a2118" stroke-width="0.5" />
+                <circle cx="32" cy="20" r="4" fill="#6b8f5a" stroke="#2a2118" stroke-width="0.5" />
+                <circle cx="52" cy="10" r="4" fill="#4a6fa5" stroke="#2a2118" stroke-width="0.5" />
+                <circle cx="20" cy="40" r="4" fill="#d4a84b" stroke="#2a2118" stroke-width="0.5" />
+                <circle cx="44" cy="45" r="4" fill="#8a5a32" stroke="#2a2118" stroke-width="0.5" />
+                <circle cx="60" cy="35" r="4" fill="#5c4a38" stroke="#2a2118" stroke-width="0.5" />
+                <text x="36" y="78" text-anchor="middle" class="diagram-label">RGB list</text>
+              </g>
+            </svg>
+            <figcaption>Fig. 2 — Shrink first, then read the opaque color points.</figcaption>
+          </figure>
+
+          <p>
+            To build a palette of, say, five colors, we use
+            <strong>k-means clustering</strong> — a way of sorting similar things into groups:
+          </p>
+
+          <figure class="diagram diagram--wide">
+            <svg viewBox="0 0 720 420" role="img" aria-labelledby="diag-kmeans-title diag-kmeans-desc">
+              <title id="diag-kmeans-title">Four steps of k-means</title>
+              <desc id="diag-kmeans-desc">
+                Plant flags, assign points to nearest flag, move flags to group averages, then
+                repeat until stable.
+              </desc>
+
+              <!-- Step 1 -->
+              <text x="90" y="28" text-anchor="middle" class="diagram-step">1. Plant flags</text>
+              <rect x="20" y="40" width="140" height="120" fill="none" stroke="#2a2118" stroke-width="1" opacity="0.45" rx="8" />
+              <circle cx="45" cy="70" r="3.5" fill="#8a6a4a" opacity="0.7" />
+              <circle cx="70" cy="95" r="3.5" fill="#8a6a4a" opacity="0.7" />
+              <circle cx="55" cy="120" r="3.5" fill="#8a6a4a" opacity="0.7" />
+              <circle cx="100" cy="65" r="3.5" fill="#8a6a4a" opacity="0.7" />
+              <circle cx="120" cy="100" r="3.5" fill="#8a6a4a" opacity="0.7" />
+              <circle cx="95" cy="130" r="3.5" fill="#8a6a4a" opacity="0.7" />
+              <circle cx="130" cy="135" r="3.5" fill="#8a6a4a" opacity="0.7" />
+              <circle cx="50" cy="90" r="7" fill="none" stroke="#8a2f2f" stroke-width="2" />
+              <circle cx="115" cy="80" r="7" fill="none" stroke="#2f5a3d" stroke-width="2" />
+              <circle cx="90" cy="125" r="7" fill="none" stroke="#2f4a7a" stroke-width="2" />
+              <text x="90" y="178" text-anchor="middle" class="diagram-note">spread-out starts</text>
+
+              <path d="M175 100 H215" stroke="#2a2118" stroke-width="1.2" />
+              <polygon points="215,96 227,100 215,104" fill="#2a2118" />
+
+              <!-- Step 2 -->
+              <text x="320" y="28" text-anchor="middle" class="diagram-step">2. Sort specks</text>
+              <rect x="250" y="40" width="140" height="120" fill="none" stroke="#2a2118" stroke-width="1" opacity="0.45" rx="8" />
+              <circle cx="275" cy="70" r="3.5" fill="#c45c4a" />
+              <circle cx="290" cy="95" r="3.5" fill="#c45c4a" />
+              <circle cx="280" cy="115" r="3.5" fill="#c45c4a" />
+              <circle cx="340" cy="60" r="3.5" fill="#6b8f5a" />
+              <circle cx="360" cy="85" r="3.5" fill="#6b8f5a" />
+              <circle cx="345" cy="100" r="3.5" fill="#6b8f5a" />
+              <circle cx="310" cy="130" r="3.5" fill="#4a6fa5" />
+              <circle cx="335" cy="140" r="3.5" fill="#4a6fa5" />
+              <circle cx="280" cy="90" r="7" fill="none" stroke="#8a2f2f" stroke-width="2" />
+              <circle cx="350" cy="75" r="7" fill="none" stroke="#2f5a3d" stroke-width="2" />
+              <circle cx="320" cy="135" r="7" fill="none" stroke="#2f4a7a" stroke-width="2" />
+              <text x="320" y="178" text-anchor="middle" class="diagram-note">nearest flag wins</text>
+
+              <path d="M405 100 H445" stroke="#2a2118" stroke-width="1.2" />
+              <polygon points="445,96 457,100 445,104" fill="#2a2118" />
+
+              <!-- Step 3 -->
+              <text x="550" y="28" text-anchor="middle" class="diagram-step">3. Move flags</text>
+              <rect x="480" y="40" width="140" height="120" fill="none" stroke="#2a2118" stroke-width="1" opacity="0.45" rx="8" />
+              <circle cx="505" cy="70" r="3.5" fill="#c45c4a" />
+              <circle cx="520" cy="95" r="3.5" fill="#c45c4a" />
+              <circle cx="510" cy="115" r="3.5" fill="#c45c4a" />
+              <circle cx="570" cy="60" r="3.5" fill="#6b8f5a" />
+              <circle cx="590" cy="85" r="3.5" fill="#6b8f5a" />
+              <circle cx="575" cy="100" r="3.5" fill="#6b8f5a" />
+              <circle cx="540" cy="130" r="3.5" fill="#4a6fa5" />
+              <circle cx="565" cy="140" r="3.5" fill="#4a6fa5" />
+              <circle cx="500" cy="85" r="5" fill="none" stroke="#8a2f2f" stroke-width="1" opacity="0.4" />
+              <circle cx="512" cy="92" r="7" fill="none" stroke="#8a2f2f" stroke-width="2" />
+              <path d="M500 85 L512 92" stroke="#8a2f2f" stroke-width="1" />
+              <circle cx="585" cy="70" r="5" fill="none" stroke="#2f5a3d" stroke-width="1" opacity="0.4" />
+              <circle cx="578" cy="82" r="7" fill="none" stroke="#2f5a3d" stroke-width="2" />
+              <circle cx="555" cy="145" r="5" fill="none" stroke="#2f4a7a" stroke-width="1" opacity="0.4" />
+              <circle cx="552" cy="135" r="7" fill="none" stroke="#2f4a7a" stroke-width="2" />
+              <text x="550" y="178" text-anchor="middle" class="diagram-note">slide to average</text>
+
+              <!-- Step 4 loop -->
+              <rect x="120" y="220" width="480" height="175" fill="none" stroke="#2a2118" stroke-width="1.2" rx="10" />
+              <text x="360" y="244" text-anchor="middle" class="diagram-step">4. Repeat until the flags barely move</text>
+
+              <g transform="translate(160,258)">
+                <circle cx="20" cy="20" r="4" fill="#c45c4a" />
+                <circle cx="40" cy="35" r="4" fill="#6b8f5a" />
+                <circle cx="55" cy="15" r="4" fill="#4a6fa5" />
+                <circle cx="30" cy="50" r="6" fill="none" stroke="#2a2118" stroke-width="1.5" />
+                <text x="40" y="72" text-anchor="middle" class="diagram-note">assign</text>
+              </g>
+              <path d="M250 295 H300" stroke="#2a2118" stroke-width="1.2" />
+              <polygon points="300,291 312,295 300,299" fill="#2a2118" />
+              <g transform="translate(330,258)">
+                <circle cx="20" cy="20" r="4" fill="#c45c4a" />
+                <circle cx="40" cy="35" r="4" fill="#6b8f5a" />
+                <circle cx="55" cy="15" r="4" fill="#4a6fa5" />
+                <circle cx="38" cy="40" r="6" fill="none" stroke="#2a2118" stroke-width="1.5" />
+                <text x="40" y="72" text-anchor="middle" class="diagram-note">average</text>
+              </g>
+              <path d="M420 295 H470" stroke="#2a2118" stroke-width="1.2" />
+              <polygon points="470,291 482,295 470,299" fill="#2a2118" />
+              <g transform="translate(500,258)">
+                <circle cx="20" cy="25" r="4" fill="#c45c4a" />
+                <circle cx="40" cy="35" r="4" fill="#6b8f5a" />
+                <circle cx="55" cy="18" r="4" fill="#4a6fa5" />
+                <circle cx="38" cy="38" r="6" fill="none" stroke="#2a2118" stroke-width="1.5" />
+                <text x="40" y="72" text-anchor="middle" class="diagram-note">~12 times</text>
+              </g>
+
+              <!-- Return path runs under the labels, then up beside "assign" -->
+              <path
+                d="M555 305 H595 V382 H140 V290 H175"
+                fill="none"
+                stroke="#8a5a32"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <polygon points="175,286 187,290 175,294" fill="#8a5a32" />
+              <text x="370" y="376" text-anchor="middle" class="diagram-note">loop</text>
+            </svg>
+            <figcaption>Fig. 3 — k-means: plant, sort, move, repeat.</figcaption>
+          </figure>
+
+          <ol class="ink-list">
+            <li>
+              <strong>Plant a few flags.</strong> We pick starting “center” colors that are spread
+              apart in the cloud (so we do not start with five nearly identical reds).
+            </li>
+            <li>
+              <strong>Sort every speck.</strong> Each pixel joins the nearest flag — “you look most
+              like this group.”
+            </li>
+            <li>
+              <strong>Move the flags.</strong> Each flag slides to the average color of its group —
+              the true middle of that pile of paint.
+            </li>
+            <li>
+              <strong>Repeat.</strong> Sort again, move again, about a dozen times, until the flags
+              barely budge.
+            </li>
+          </ol>
+
+          <p>
+            Those final flag positions are the palette. We run the whole sorting three times and
+            keep the tidiest result. Colors that ended up almost the same are merged. Then we line
+            them up from dark to light so the swatches read like a calm strip of paint chips.
+          </p>
+
+          <figure class="diagram">
+            <svg viewBox="0 0 640 200" role="img" aria-labelledby="diag-finish-title">
+              <title id="diag-finish-title">Best of three runs, dedupe, then sort dark to light</title>
+              <text x="100" y="30" text-anchor="middle" class="diagram-step">3 runs</text>
+              <rect x="30" y="45" width="50" height="28" fill="#5c4a38" stroke="#2a2118" stroke-width="0.8" />
+              <rect x="80" y="45" width="50" height="28" fill="#8a5a32" stroke="#2a2118" stroke-width="0.8" />
+              <rect x="130" y="45" width="50" height="28" fill="#c4a882" stroke="#2a2118" stroke-width="0.8" />
+              <text x="105" y="90" text-anchor="middle" class="diagram-note">run A</text>
+              <rect x="30" y="105" width="50" height="28" fill="#4a3a28" stroke="#2a2118" stroke-width="0.8" />
+              <rect x="80" y="105" width="50" height="28" fill="#9a6a42" stroke="#2a2118" stroke-width="0.8" />
+              <rect x="130" y="105" width="50" height="28" fill="#d4b892" stroke="#2a2118" stroke-width="0.8" />
+              <text x="105" y="150" text-anchor="middle" class="diagram-note">run B ★ best</text>
+              <rect x="30" y="155" width="50" height="20" fill="#6a5040" stroke="#2a2118" stroke-width="0.8" opacity="0.5" />
+              <rect x="80" y="155" width="50" height="20" fill="#7a5a38" stroke="#2a2118" stroke-width="0.8" opacity="0.5" />
+              <rect x="130" y="155" width="50" height="20" fill="#b89870" stroke="#2a2118" stroke-width="0.8" opacity="0.5" />
+
+              <path d="M200 100 H240" stroke="#2a2118" stroke-width="1.2" />
+              <polygon points="240,96 252,100 240,104" fill="#2a2118" />
+              <text x="226" y="88" text-anchor="middle" class="diagram-note">merge</text>
+
+              <g transform="translate(270,70)">
+                <circle cx="20" cy="30" r="14" fill="#4a3a28" stroke="#2a2118" stroke-width="1" />
+                <circle cx="48" cy="30" r="14" fill="#4a3a2c" stroke="#2a2118" stroke-width="1" opacity="0.45" />
+                <text x="34" y="70" text-anchor="middle" class="diagram-note">near twins</text>
+                <path d="M20 30 L48 30" stroke="#8a2f2f" stroke-width="1.5" />
+              </g>
+
+              <path d="M360 100 H400" stroke="#2a2118" stroke-width="1.2" />
+              <polygon points="400,96 412,100 400,104" fill="#2a2118" />
+              <text x="386" y="88" text-anchor="middle" class="diagram-note">sort</text>
+
+              <g transform="translate(430,55)">
+                <rect x="0" y="0" width="40" height="90" fill="#2a2118" stroke="#2a2118" stroke-width="0.8" />
+                <rect x="40" y="0" width="40" height="90" fill="#5c4a38" stroke="#2a2118" stroke-width="0.8" />
+                <rect x="80" y="0" width="40" height="90" fill="#8a5a32" stroke="#2a2118" stroke-width="0.8" />
+                <rect x="120" y="0" width="40" height="90" fill="#c4a882" stroke="#2a2118" stroke-width="0.8" />
+                <rect x="160" y="0" width="40" height="90" fill="#e8dcc4" stroke="#2a2118" stroke-width="0.8" />
+                <text x="20" y="110" text-anchor="middle" class="diagram-note">dark</text>
+                <text x="180" y="110" text-anchor="middle" class="diagram-note">light</text>
+              </g>
+            </svg>
+            <figcaption>Fig. 4 — Keep the best run, merge near-twins, order dark → light.</figcaption>
+          </figure>
+
+          <p>
+            The studio does this four times — for 3, 5, 7, and 10 colors — so you see both a simple
+            summary and a finer breakdown of the same image.
+          </p>
+
+          <figure class="diagram">
+            <svg viewBox="0 0 640 200" role="img" aria-labelledby="diag-sizes-title">
+              <title id="diag-sizes-title">Four palette sizes from the same cloud</title>
+              <text x="320" y="22" text-anchor="middle" class="diagram-step">Same image → four studies</text>
+
+              <!-- 2×2 grid so every strip stays inside the frame -->
+              <g transform="translate(40,42)">
+                <rect width="40" height="44" fill="#2a2118" stroke="#2a2118" stroke-width="0.6" />
+                <rect x="40" width="40" height="44" fill="#8a5a32" stroke="#2a2118" stroke-width="0.6" />
+                <rect x="80" width="40" height="44" fill="#d4b892" stroke="#2a2118" stroke-width="0.6" />
+                <text x="60" y="66" text-anchor="middle" class="diagram-label">k = 3</text>
+              </g>
+
+              <g transform="translate(340,42)">
+                <rect width="32" height="44" fill="#2a2118" stroke="#2a2118" stroke-width="0.6" />
+                <rect x="32" width="32" height="44" fill="#5c4a38" stroke="#2a2118" stroke-width="0.6" />
+                <rect x="64" width="32" height="44" fill="#8a5a32" stroke="#2a2118" stroke-width="0.6" />
+                <rect x="96" width="32" height="44" fill="#c4a882" stroke="#2a2118" stroke-width="0.6" />
+                <rect x="128" width="32" height="44" fill="#e8dcc4" stroke="#2a2118" stroke-width="0.6" />
+                <text x="80" y="66" text-anchor="middle" class="diagram-label">k = 5</text>
+              </g>
+
+              <g transform="translate(40,120)">
+                <rect width="24" height="44" fill="#1a1510" stroke="#2a2118" stroke-width="0.5" />
+                <rect x="24" width="24" height="44" fill="#3d3228" stroke="#2a2118" stroke-width="0.5" />
+                <rect x="48" width="24" height="44" fill="#5c4a38" stroke="#2a2118" stroke-width="0.5" />
+                <rect x="72" width="24" height="44" fill="#8a5a32" stroke="#2a2118" stroke-width="0.5" />
+                <rect x="96" width="24" height="44" fill="#a87848" stroke="#2a2118" stroke-width="0.5" />
+                <rect x="120" width="24" height="44" fill="#c4a882" stroke="#2a2118" stroke-width="0.5" />
+                <rect x="144" width="24" height="44" fill="#e8dcc4" stroke="#2a2118" stroke-width="0.5" />
+                <text x="84" y="66" text-anchor="middle" class="diagram-label">k = 7</text>
+              </g>
+
+              <g transform="translate(340,120)">
+                <rect width="16" height="44" fill="#1a1510" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="16" width="16" height="44" fill="#2a2118" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="32" width="16" height="44" fill="#3d3228" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="48" width="16" height="44" fill="#5c4a38" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="64" width="16" height="44" fill="#6b4e32" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="80" width="16" height="44" fill="#8a5a32" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="96" width="16" height="44" fill="#a87848" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="112" width="16" height="44" fill="#c4a882" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="128" width="16" height="44" fill="#d9c7a5" stroke="#2a2118" stroke-width="0.4" />
+                <rect x="144" width="16" height="44" fill="#f0e4cc" stroke="#2a2118" stroke-width="0.4" />
+                <text x="80" y="66" text-anchor="middle" class="diagram-label">k = 10</text>
+              </g>
+            </svg>
+            <figcaption>Fig. 5 — Coarse to fine: 3, 5, 7, and 10 hues.</figcaption>
+          </figure>
+
+          <aside class="marginalia">
+            Why “k-means”? The <em>k</em> is how many colors you asked for. The
+            <em>means</em> are the average colors of each group.
+          </aside>
+        </section>
+
+        <section id="structure" class="doc-section">
+          <p class="section-label">Chapter II</p>
+          <h2>File structure &amp; function overview</h2>
+          <p>The project is a small static site — three pages of parchment and one engine of ink:</p>
+
+          <figure class="diagram">
+            <svg viewBox="0 0 640 300" role="img" aria-labelledby="diag-files-title">
+              <title id="diag-files-title">Project files as a tree</title>
+              <rect x="220" y="12" width="200" height="36" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.4" rx="8" />
+              <text x="320" y="36" text-anchor="middle" class="diagram-step">palette-generation/</text>
+
+              <path d="M320 48 V64" stroke="#2a2118" stroke-width="1.15" fill="none" />
+              <path d="M70 64 H570" stroke="#2a2118" stroke-width="1.15" fill="none" />
+              <path d="M70 64 V80 M195 64 V80 M320 64 V80 M445 64 V80 M570 64 V80" stroke="#2a2118" stroke-width="1.15" fill="none" />
+
+              <rect x="20" y="80" width="100" height="48" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.2" rx="8" />
+              <text x="70" y="100" text-anchor="middle" class="diagram-label">index.html</text>
+              <text x="70" y="116" text-anchor="middle" class="diagram-note">Studio UI</text>
+
+              <rect x="145" y="80" width="100" height="48" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.2" rx="8" />
+              <text x="195" y="100" text-anchor="middle" class="diagram-label">architecture</text>
+              <text x="195" y="116" text-anchor="middle" class="diagram-note">Docs page</text>
+
+              <rect x="270" y="80" width="100" height="48" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.2" rx="8" />
+              <text x="320" y="100" text-anchor="middle" class="diagram-label">styles.css</text>
+              <text x="320" y="116" text-anchor="middle" class="diagram-note">Look &amp; layout</text>
+
+              <rect x="395" y="80" width="100" height="48" fill="rgba(232,168,124,0.15)" stroke="#2a2118" stroke-width="1.4" rx="8" />
+              <text x="445" y="100" text-anchor="middle" class="diagram-label">script.js</text>
+              <text x="445" y="116" text-anchor="middle" class="diagram-note">Engine ★</text>
+
+              <rect x="520" y="80" width="100" height="48" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.2" rx="8" />
+              <text x="570" y="100" text-anchor="middle" class="diagram-label">README.md</text>
+              <text x="570" y="116" text-anchor="middle" class="diagram-note">Deploy notes</text>
+
+              <path d="M445 128 V150" stroke="#2a2118" stroke-width="1.2" />
+              <rect x="80" y="150" width="480" height="120" fill="none" stroke="#8a5a32" stroke-width="1.2" rx="10" />
+              <text x="320" y="176" text-anchor="middle" class="diagram-note">script.js powers the studio</text>
+
+              <text x="155" y="210" text-anchor="middle" class="diagram-label">extract</text>
+              <text x="265" y="210" text-anchor="middle" class="diagram-label">render</text>
+              <text x="375" y="210" text-anchor="middle" class="diagram-label">copy hex</text>
+              <text x="485" y="210" text-anchor="middle" class="diagram-label">PNG export</text>
+              <circle cx="155" cy="230" r="4" fill="#8a5a32" />
+              <circle cx="265" cy="230" r="4" fill="#8a5a32" />
+              <circle cx="375" cy="230" r="4" fill="#8a5a32" />
+              <circle cx="485" cy="230" r="4" fill="#8a5a32" />
+              <path d="M155 230 H485" stroke="#8a5a32" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+            <figcaption>Fig. 6 — Static site files; <code>script.js</code> is the measuring engine.</figcaption>
+          </figure>
+
+          <div class="file-tree" role="list">
+            <div class="file-tree__item" role="listitem">
+              <code>index.html</code>
+              <span>The studio desk — upload form, preview, swatches, download buttons.</span>
+            </div>
+            <div class="file-tree__item" role="listitem">
+              <code>architecture.html</code>
+              <span>This folio — method, structure, and data path.</span>
+            </div>
+            <div class="file-tree__item" role="listitem">
+              <code>styles.css</code>
+              <span>Parchment look, navigation, swatches, and documentation layout.</span>
+            </div>
+            <div class="file-tree__item" role="listitem">
+              <code>script.js</code>
+              <span>All extraction, rendering, copy, and PNG export logic.</span>
+            </div>
+            <div class="file-tree__item" role="listitem">
+              <code>README.md</code>
+              <span>How to open locally and publish with GitHub Pages.</span>
+            </div>
+          </div>
+
+          <h3>How the main functions work</h3>
+
+          <figure class="diagram diagram--wide">
+            <svg viewBox="0 0 720 480" role="img" aria-labelledby="diag-fn-title diag-fn-desc">
+              <title id="diag-fn-title">Function call map</title>
+              <desc id="diag-fn-desc">
+                handleImageChange calls loadImage, samplePixels, and renderPalettes. renderPalettes
+                calls extractPalette, which uses bestKMeans and helpers. Downloads use
+                downloadPaletteImage.
+              </desc>
+
+              <rect x="240" y="16" width="240" height="40" fill="rgba(232,168,124,0.2)" stroke="#2a2118" stroke-width="1.4" />
+              <text x="360" y="42" text-anchor="middle" class="diagram-step">handleImageChange</text>
+
+              <path d="M360 56 V76 M180 76 H540 M180 76 V96 M360 76 V96 M540 76 V96" stroke="#2a2118" stroke-width="1.1" fill="none" />
+
+              <rect x="100" y="96" width="160" height="36" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" />
+              <text x="180" y="120" text-anchor="middle" class="diagram-label">loadImage</text>
+
+              <rect x="280" y="96" width="160" height="36" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" />
+              <text x="360" y="120" text-anchor="middle" class="diagram-label">samplePixels</text>
+
+              <rect x="460" y="96" width="160" height="36" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" />
+              <text x="540" y="120" text-anchor="middle" class="diagram-label">renderPalettes</text>
+
+              <path d="M540 132 V152" stroke="#2a2118" stroke-width="1.1" />
+              <rect x="440" y="152" width="200" height="36" fill="rgba(232,168,124,0.15)" stroke="#2a2118" stroke-width="1.2" />
+              <text x="540" y="176" text-anchor="middle" class="diagram-label">extractPalette ×4</text>
+
+              <path d="M540 188 V208" stroke="#2a2118" stroke-width="1.1" />
+              <rect x="450" y="208" width="180" height="36" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" />
+              <text x="540" y="232" text-anchor="middle" class="diagram-label">bestKMeans</text>
+
+              <path d="M540 244 V264" stroke="#2a2118" stroke-width="1.1" />
+              <rect x="470" y="264" width="140" height="36" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" />
+              <text x="540" y="288" text-anchor="middle" class="diagram-label">kMeans</text>
+
+              <path d="M540 300 V320 M420 320 H620 M420 320 V340 M540 320 V340 M620 320 V340" stroke="#2a2118" stroke-width="1.1" fill="none" />
+
+              <rect x="350" y="340" width="140" height="32" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1" />
+              <text x="420" y="361" text-anchor="middle" class="diagram-note">initCenters</text>
+
+              <rect x="470" y="340" width="140" height="32" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1" />
+              <text x="540" y="361" text-anchor="middle" class="diagram-note">assign / average</text>
+
+              <rect x="590" y="340" width="120" height="32" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1" />
+              <text x="650" y="361" text-anchor="middle" class="diagram-note">totalError</text>
+
+              <!-- Side links: keep clear of the main trunk -->
+              <path
+                d="M440 170 H120 V400"
+                stroke="#8a5a32"
+                stroke-width="1.3"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <polygon points="120,400 116,388 124,388" fill="#8a5a32" />
+              <rect x="40" y="400" width="320" height="56" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" rx="8" />
+              <text x="200" y="424" text-anchor="middle" class="diagram-label">helpers</text>
+              <text x="200" y="444" text-anchor="middle" class="diagram-note">
+                distance · dedupe · luminance sort · hex
+              </text>
+
+              <path
+                d="M640 170 H680 V400"
+                stroke="#8a5a32"
+                stroke-width="1.3"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <polygon points="680,400 676,388 684,388" fill="#8a5a32" />
+              <rect x="400" y="400" width="280" height="56" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" rx="8" />
+              <text x="540" y="424" text-anchor="middle" class="diagram-label">downloadPaletteImage</text>
+              <text x="540" y="444" text-anchor="middle" class="diagram-note">parchment PNG export</text>
+            </svg>
+            <figcaption>Fig. 7 — Who calls whom inside <code>script.js</code>.</figcaption>
+          </figure>
+
+          <dl class="fn-list">
+            <div>
+              <dt><code>handleImageChange</code></dt>
+              <dd>
+                Fires when you choose a file. Loads the image, samples pixels, asks for four
+                palettes, and updates the page status.
+              </dd>
+            </div>
+            <div>
+              <dt><code>loadImage</code></dt>
+              <dd>Turns a file URL into a usable browser image, or reports failure.</dd>
+            </div>
+            <div>
+              <dt><code>samplePixels</code></dt>
+              <dd>
+                Draws a small copy of the image on an invisible canvas, reads RGBA bytes, and keeps
+                opaque RGB triples.
+              </dd>
+            </div>
+            <div>
+              <dt><code>extractPalette</code></dt>
+              <dd>
+                Runs k-means for a target size, deduplicates near-twins, and sorts by brightness.
+              </dd>
+            </div>
+            <div>
+              <dt><code>bestKMeans</code> / <code>kMeans</code></dt>
+              <dd>
+                The clustering engine: seed centers, assign pixels, recompute averages, score error,
+                keep the best of three runs.
+              </dd>
+            </div>
+            <div>
+              <dt><code>initCenters</code></dt>
+              <dd>
+                Picks spread-out starting colors (farthest-point style) so groups begin in different
+                regions of the color cloud.
+              </dd>
+            </div>
+            <div>
+              <dt>
+                <code>colorDistanceSq</code>, <code>sortByLuminance</code>,
+                <code>dedupeColors</code>
+              </dt>
+              <dd>
+                Helpers: compare colors without square roots, order dark→light, merge near-identical
+                centers.
+              </dd>
+            </div>
+            <div>
+              <dt><code>renderPalettes</code></dt>
+              <dd>
+                Builds the on-page studies, wires “copy hex” on each swatch, and adds per-palette
+                download buttons.
+              </dd>
+            </div>
+            <div>
+              <dt><code>downloadPaletteImage</code></dt>
+              <dd>
+                Paints one or all palettes onto a parchment-styled canvas and saves a PNG download.
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section id="data-flow" class="doc-section">
+          <p class="section-label">Chapter III</p>
+          <h2>From input image to output palette</h2>
+          <p>
+            Here is the journey of the data — what enters, what it becomes at each step, and what
+            you finally see or download.
+          </p>
+
+          <figure class="diagram diagram--wide">
+            <svg viewBox="0 0 700 560" role="img" aria-labelledby="diag-pipeline-title diag-pipeline-desc">
+              <title id="diag-pipeline-title">Full data pipeline</title>
+              <desc id="diag-pipeline-desc">
+                Vertical flow from image file through pixels and k-means to swatches and PNG
+                download.
+              </desc>
+
+              <defs>
+                <marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#2a2118" />
+                </marker>
+              </defs>
+
+              <!-- Column of stages -->
+              <g transform="translate(200,10)">
+                <rect width="300" height="44" fill="rgba(255,248,230,0.6)" stroke="#2a2118" stroke-width="1.3" rx="8" />
+                <text x="150" y="28" text-anchor="middle" class="diagram-step">1 · Image file</text>
+              </g>
+              <path d="M350 54 V70" stroke="#2a2118" stroke-width="1.2" marker-end="url(#flow-arrow)" />
+
+              <g transform="translate(200,70)">
+                <rect width="300" height="44" fill="rgba(255,248,230,0.6)" stroke="#2a2118" stroke-width="1.3" />
+                <text x="150" y="28" text-anchor="middle" class="diagram-step">2 · Browser Image</text>
+              </g>
+              <path d="M350 114 V130" stroke="#2a2118" stroke-width="1.2" marker-end="url(#flow-arrow)" />
+
+              <!-- split preview / sample -->
+              <path d="M350 130 V148 M220 148 H480 M220 148 V160 M480 148 V160" stroke="#2a2118" stroke-width="1.1" fill="none" />
+              <g transform="translate(130,160)">
+                <rect width="180" height="50" fill="rgba(255,248,230,0.55)" stroke="#2a2118" stroke-width="1.1" />
+                <text x="90" y="22" text-anchor="middle" class="diagram-label">3a · Preview</text>
+                <text x="90" y="40" text-anchor="middle" class="diagram-note">on the desk</text>
+              </g>
+              <g transform="translate(390,160)">
+                <rect width="180" height="50" fill="rgba(232,168,124,0.18)" stroke="#2a2118" stroke-width="1.2" />
+                <text x="90" y="22" text-anchor="middle" class="diagram-label">3b · Shrink canvas</text>
+                <text x="90" y="40" text-anchor="middle" class="diagram-note">≤ 120px</text>
+              </g>
+              <path d="M480 210 V226" stroke="#2a2118" stroke-width="1.2" marker-end="url(#flow-arrow)" />
+
+              <g transform="translate(200,226)">
+                <rect width="300" height="44" fill="rgba(255,248,230,0.6)" stroke="#2a2118" stroke-width="1.3" />
+                <text x="150" y="28" text-anchor="middle" class="diagram-step">4 · Pixel list [R,G,B]</text>
+              </g>
+              <path d="M350 270 V286" stroke="#2a2118" stroke-width="1.2" marker-end="url(#flow-arrow)" />
+
+              <g transform="translate(160,286)">
+                <rect width="380" height="70" fill="rgba(232,168,124,0.15)" stroke="#2a2118" stroke-width="1.3" />
+                <text x="190" y="28" text-anchor="middle" class="diagram-step">5 · k-means × 4</text>
+                <text x="190" y="52" text-anchor="middle" class="diagram-note">k = 3 · 5 · 7 · 10  (3 runs each)</text>
+              </g>
+              <path d="M350 356 V372" stroke="#2a2118" stroke-width="1.2" marker-end="url(#flow-arrow)" />
+
+              <g transform="translate(200,372)">
+                <rect width="300" height="44" fill="rgba(255,248,230,0.6)" stroke="#2a2118" stroke-width="1.3" />
+                <text x="150" y="28" text-anchor="middle" class="diagram-step">6 · Clean &amp; sort</text>
+              </g>
+              <path d="M350 416 V432" stroke="#2a2118" stroke-width="1.2" marker-end="url(#flow-arrow)" />
+
+              <g transform="translate(200,432)">
+                <rect width="300" height="44" fill="rgba(255,248,230,0.6)" stroke="#2a2118" stroke-width="1.3" />
+                <text x="150" y="28" text-anchor="middle" class="diagram-step">7 · { size, colors }</text>
+              </g>
+              <path d="M350 476 V492 M220 492 H480 M220 492 V504 M480 492 V504" stroke="#2a2118" stroke-width="1.1" fill="none" />
+
+              <g transform="translate(130,504)">
+                <rect width="180" height="44" fill="rgba(255,248,230,0.6)" stroke="#2a2118" stroke-width="1.2" />
+                <text x="90" y="28" text-anchor="middle" class="diagram-label">Swatches + hex</text>
+              </g>
+              <g transform="translate(390,504)">
+                <rect width="180" height="44" fill="rgba(255,248,230,0.6)" stroke="#2a2118" stroke-width="1.2" />
+                <text x="90" y="28" text-anchor="middle" class="diagram-label">PNG download</text>
+              </g>
+            </svg>
+            <figcaption>Fig. 8 — End-to-end path from file to pigments.</figcaption>
+          </figure>
+
+          <figure class="diagram">
+            <svg viewBox="0 0 640 200" role="img" aria-labelledby="diag-shapes-title">
+              <title id="diag-shapes-title">How the data shape changes</title>
+              <text x="320" y="28" text-anchor="middle" class="diagram-step">Shape of the data at each gate</text>
+
+              <rect x="20" y="55" width="100" height="70" fill="none" stroke="#2a2118" stroke-width="1.2" />
+              <text x="70" y="85" text-anchor="middle" class="diagram-label">File</text>
+              <text x="70" y="105" text-anchor="middle" class="diagram-note">bytes</text>
+
+              <path d="M130 90 H155" stroke="#2a2118" stroke-width="1.1" />
+              <polygon points="155,86 167,90 155,94" fill="#2a2118" />
+
+              <rect x="175" y="55" width="100" height="70" fill="none" stroke="#2a2118" stroke-width="1.2" />
+              <text x="225" y="80" text-anchor="middle" class="diagram-label">Image</text>
+              <text x="225" y="100" text-anchor="middle" class="diagram-note">W × H</text>
+              <text x="225" y="116" text-anchor="middle" class="diagram-note">pixels</text>
+
+              <path d="M285 90 H310" stroke="#2a2118" stroke-width="1.1" />
+              <polygon points="310,86 322,90 310,94" fill="#2a2118" />
+
+              <rect x="330" y="50" width="120" height="80" fill="none" stroke="#2a2118" stroke-width="1.2" />
+              <text x="390" y="78" text-anchor="middle" class="diagram-label">Array</text>
+              <text x="390" y="98" text-anchor="middle" class="diagram-note">[[R,G,B],</text>
+              <text x="390" y="116" text-anchor="middle" class="diagram-note">…]</text>
+
+              <path d="M460 90 H485" stroke="#2a2118" stroke-width="1.1" />
+              <polygon points="485,86 497,90 485,94" fill="#2a2118" />
+
+              <rect x="505" y="50" width="120" height="80" fill="none" stroke="#2a2118" stroke-width="1.2" />
+              <text x="565" y="78" text-anchor="middle" class="diagram-label">Palette</text>
+              <text x="565" y="98" text-anchor="middle" class="diagram-note">{ size: 5,</text>
+              <text x="565" y="116" text-anchor="middle" class="diagram-note">colors: […] }</text>
+
+              <text x="320" y="170" text-anchor="middle" class="diagram-caption">
+                File → bitmap → list of points → compact color record
+              </text>
+            </svg>
+            <figcaption>Fig. 9 — The data gets smaller and more meaningful at each step.</figcaption>
+          </figure>
+
+          <ol class="flow-steps">
+            <li>
+              <strong>Input file</strong>
+              <span>A PNG, JPG, WEBP, or GIF from the file browser.</span>
+            </li>
+            <li>
+              <strong>Browser image</strong>
+              <span><code>File</code> → object URL → <code>Image</code> bitmap in memory.</span>
+            </li>
+            <li>
+              <strong>Preview</strong>
+              <span>The same image is shown in the “Study · Source” frame.</span>
+            </li>
+            <li>
+              <strong>Downscaled canvas</strong>
+              <span>
+                Drawn at most ~120px on the long edge so later math stays light.
+              </span>
+            </li>
+            <li>
+              <strong>Pixel list</strong>
+              <span>
+                Flat RGBA bytes become an array of <code>[R, G, B]</code> points (alpha &lt; 128
+                skipped).
+              </span>
+            </li>
+            <li>
+              <strong>Four clustering passes</strong>
+              <span>
+                For <code>k = 3, 5, 7, 10</code>: seed → assign → average → repeat → best of 3 runs.
+              </span>
+            </li>
+            <li>
+              <strong>Cleaned centers</strong>
+              <span>
+                Near-duplicate colors merged; remaining hues sorted by luminance.
+              </span>
+            </li>
+            <li>
+              <strong>Palette records</strong>
+              <span>
+                Stored as <code>{ size, colors }</code> for the UI and for PNG export.
+              </span>
+            </li>
+            <li>
+              <strong>Output</strong>
+              <span>
+                On-screen swatches (click to copy hex) and optional parchment PNG downloads.
+              </span>
+            </li>
+          </ol>
+
+          <aside class="marginalia">
+            Nothing leaves your machine for extraction — the measuring happens entirely in the
+            browser.
+          </aside>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>Return to the <a href="index.html">studio desk</a> to place an image.</p>
+      </footer>
+    </div>
+  </body>
+</html>

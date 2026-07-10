@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex of Colour — Palette Generation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Source+Sans+3:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="parchment" aria-hidden="true"></div>
+    <svg class="sketch-ornament sketch-ornament--left" viewBox="0 0 160 280" aria-hidden="true">
+      <circle cx="78" cy="90" r="52" fill="none" stroke="currentColor" stroke-width="1.1" />
+      <rect x="36" y="38" width="84" height="104" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <line x1="78" y1="28" x2="78" y2="152" stroke="currentColor" stroke-width="0.7" />
+      <line x1="26" y1="90" x2="130" y2="90" stroke="currentColor" stroke-width="0.7" />
+      <path
+        d="M48 188c8-18 22-28 38-28s28 12 34 30c-10 8-22 14-36 14s-26-6-36-16z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+      />
+      <path d="M62 210c6 18 14 34 18 52" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <path d="M96 210c-4 16-8 34-6 52" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <path d="M40 170c-8 10-14 24-12 38" fill="none" stroke="currentColor" stroke-width="0.8" />
+      <path d="M120 168c10 12 14 26 10 40" fill="none" stroke="currentColor" stroke-width="0.8" />
+    </svg>
+    <svg class="sketch-ornament sketch-ornament--right" viewBox="0 0 140 240" aria-hidden="true">
+      <path
+        d="M20 40c30 8 48 34 52 70 4 30-8 58-34 74"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.1"
+      />
+      <path
+        d="M40 48c22 10 34 30 36 54 2 28-10 50-30 64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="0.8"
+        opacity="0.7"
+      />
+      <path d="M72 30c8 18 10 40 4 62" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <circle cx="74" cy="28" r="4" fill="none" stroke="currentColor" stroke-width="0.9" />
+      <path d="M18 170h90M28 186h70M38 202h50" stroke="currentColor" stroke-width="0.7" />
+      <path
+        d="M100 120c12-8 24-6 34 4M104 136c14-4 24 2 30 14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="0.8"
+      />
+    </svg>
+
+    <div class="page">
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html" aria-current="page">Studio</a>
+        <a href="architecture.html">Architecture</a>
+      </nav>
+
+      <header class="header">
+        <p class="folio">Folio I · Studio Notes</p>
+        <h1 class="brand">Codex of Colour</h1>
+        <p class="tagline">
+          From the likeness of an image, extract the pigments — studies of 3, 5, 7, and 10 hues,
+          after the manner of the old masters’ notebooks.
+        </p>
+        <div class="rule" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </header>
+
+      <main>
+        <form id="palette-form" class="upload-form" aria-label="Upload an image">
+          <label class="file-label" for="image-input">
+            <span class="file-label__mark" aria-hidden="true">❧</span>
+            <span class="file-label__title">Place an image upon the desk</span>
+            <span class="file-label__hint">PNG, JPG, WEBP, or GIF — then the pigments shall be drawn forth</span>
+            <input
+              id="image-input"
+              name="image"
+              type="file"
+              accept="image/*"
+              required
+            />
+          </label>
+          <p id="file-name" class="file-name" hidden></p>
+        </form>
+
+        <section id="preview-section" class="preview-section" hidden>
+          <p class="section-label">Study · Source</p>
+          <figure class="preview-frame">
+            <img id="preview-image" class="preview-image" alt="Uploaded image preview" />
+          </figure>
+        </section>
+
+        <div id="download-all-wrap" class="download-all-wrap" hidden>
+          <button type="button" id="download-all" class="ink-button">
+            Download all palettes
+          </button>
+        </div>
+
+        <section id="palettes" class="palettes" aria-live="polite"></section>
+
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </main>
+
+      <footer class="footer">
+        <p>Drawn in the browser · k-means as the measuring compass</p>
+      </footer>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
