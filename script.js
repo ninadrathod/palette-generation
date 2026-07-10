@@ -18,6 +18,8 @@ const downloadAllBtn = document.getElementById("download-all");
 /** @type {{ size: number, colors: number[][] }[]} */
 let currentPalettes = [];
 let sourceFileName = "image";
+/** @type {string | null} */
+let previewObjectUrl = null;
 
 imageInput.addEventListener("change", handleImageChange);
 downloadAllBtn.addEventListener("click", () => {
@@ -37,11 +39,16 @@ async function handleImageChange(event) {
 
   try {
     setStatus("Measuring the pigments…");
-    const objectUrl = URL.createObjectURL(file);
-    const image = await loadImage(objectUrl);
-    URL.revokeObjectURL(objectUrl);
 
-    previewImage.src = image.src;
+    if (previewObjectUrl) {
+      URL.revokeObjectURL(previewObjectUrl);
+      previewObjectUrl = null;
+    }
+
+    previewObjectUrl = URL.createObjectURL(file);
+    const image = await loadImage(previewObjectUrl);
+
+    previewImage.src = previewObjectUrl;
     previewSection.hidden = false;
 
     const pixels = samplePixels(image);
@@ -56,6 +63,8 @@ async function handleImageChange(event) {
     currentPalettes = [];
     palettesEl.innerHTML = "";
     downloadAllWrap.hidden = true;
+    previewSection.hidden = true;
+    previewImage.removeAttribute("src");
     setStatus(error.message || "Could not process that image.", true);
   }
 }
