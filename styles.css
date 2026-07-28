@@ -12,6 +12,8 @@
   --font-display: "IM Fell English", "Times New Roman", serif;
   --font-body: "Source Sans 3", "Segoe UI", sans-serif;
   --font-note: "Source Sans 3", "Segoe UI", sans-serif;
+  --font-credit: "Fredoka", "Avenir Next Rounded", "Segoe UI", sans-serif;
+  --credit: #e85d4c;
   --radius: 14px;
   --radius-sm: 8px;
   --radius-xs: 6px;
@@ -514,6 +516,29 @@ body {
   font-size: 0.98rem;
   font-weight: 600;
   color: var(--umber);
+}
+
+.footer p + p {
+  margin-top: 0.45rem;
+}
+
+.footer-credit {
+  font-family: var(--font-credit);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--credit);
+}
+
+.footer-credit a {
+  color: var(--credit);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1.5px;
+}
+
+.footer-credit a:hover {
+  color: #c94436;
 }
 
 .footer a {
