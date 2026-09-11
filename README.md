@@ -5,7 +5,6 @@ Extract 3, 5, 7, and 10 color palettes from an image with k-means (runs in the b
 | File | Role |
 |------|------|
 | `index.html` | Studio — upload, swatches, downloads |
-| `architecture.html` | How it works |
 | `styles.css` | Styles |
 | `script.js` | Extraction & export |
 
