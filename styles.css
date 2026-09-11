@@ -248,15 +248,17 @@ body {
   line-height: 1.45;
 }
 
-.file-label input[type="file"] {
+.file-label__input {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  inset: -1px;
+  z-index: 1;
+  width: auto;
+  height: auto;
+  margin: 0;
   padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 0;
   border: 0;
 }
 

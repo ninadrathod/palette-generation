@@ -22,6 +22,8 @@ let sourceFileName = "image";
 /** @type {string | null} */
 let previewObjectUrl = null;
 let dragDepth = 0;
+let lastProcessKey = "";
+let lastProcessAt = 0;
 
 imageInput.addEventListener("change", handleImageChange);
 downloadAllBtn.addEventListener("click", async () => {
@@ -33,10 +35,11 @@ downloadAllBtn.addEventListener("click", async () => {
   announceSaveResult(result, "All palettes saved as an image.");
 });
 
-document.addEventListener("dragenter", handleWindowDragEnter);
-document.addEventListener("dragover", handleWindowDragOver);
-document.addEventListener("dragleave", handleWindowDragLeave);
-document.addEventListener("drop", handleWindowDrop);
+const dragListenerOptions = { capture: true };
+window.addEventListener("dragenter", handleWindowDragEnter, dragListenerOptions);
+window.addEventListener("dragover", handleWindowDragOver, dragListenerOptions);
+window.addEventListener("dragleave", handleWindowDragLeave, dragListenerOptions);
+window.addEventListener("drop", handleWindowDrop, dragListenerOptions);
 
 function handleImageChange(event) {
   const file = event.target.files?.[0];
@@ -53,6 +56,12 @@ async function processImageFile(file) {
     setStatus("Please choose an image file (PNG, JPG, WEBP, or GIF).", true);
     return;
   }
+
+  const processKey = `${file.name}:${file.size}:${file.lastModified}`;
+  const now = Date.now();
+  if (processKey === lastProcessKey && now - lastProcessAt < 800) return;
+  lastProcessKey = processKey;
+  lastProcessAt = now;
 
   syncFileInput(file);
   clearStatus();
@@ -109,14 +118,90 @@ function syncFileInput(file) {
   }
 }
 
+function transferTypes(dataTransfer) {
+  if (!dataTransfer?.types) return [];
+  try {
+    return Array.from(dataTransfer.types).map((type) => String(type));
+  } catch {
+    return [];
+  }
+}
+
 function dataTransferHasFiles(event) {
-  return Boolean(event.dataTransfer?.types?.includes("Files"));
+  const dataTransfer = event.dataTransfer;
+  if (!dataTransfer) return false;
+  if (dataTransfer.files?.length) return true;
+  if (
+    transferTypes(dataTransfer).some(
+      (type) => type.toLowerCase() === "files" || type === "application/x-moz-file"
+    )
+  ) {
+    return true;
+  }
+  return [...(dataTransfer.items || [])].some((item) => item.kind === "file");
+}
+
+function isDroppablePayload(event) {
+  if (dataTransferHasFiles(event)) return true;
+  return transferTypes(event.dataTransfer).some((type) =>
+    ["text/uri-list", "text/html", "text/plain", "url"].includes(type.toLowerCase())
+  );
 }
 
 function getDroppedImageFile(dataTransfer) {
   if (!dataTransfer) return null;
+
   const files = [...(dataTransfer.files || [])];
-  return files.find(isImageFile) || null;
+  const fromFiles = files.find(isImageFile);
+  if (fromFiles) return fromFiles;
+
+  for (const item of dataTransfer.items || []) {
+    if (item.kind !== "file") continue;
+    const file = item.getAsFile();
+    if (isImageFile(file)) return file;
+  }
+
+  return null;
+}
+
+async function getDroppedImageFromUri(dataTransfer) {
+  if (!dataTransfer) return null;
+
+  const html = dataTransfer.getData("text/html") || "";
+  const fromHtml = html.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1];
+  const fromUri = (dataTransfer.getData("text/uri-list") || "")
+    .split(/\r?\n/)
+    .find((line) => line && !line.startsWith("#"));
+  const url = (fromHtml || fromUri || dataTransfer.getData("text/plain") || "").trim();
+  if (!url || !/^(https?:|data:image|blob:)/i.test(url)) return null;
+
+  return fileFromImageUrl(url);
+}
+
+async function fileFromImageUrl(url) {
+  const nameFromUrl = url.split("/").pop()?.split("?")[0] || "dropped-image.png";
+  const fileName = /\.[a-z0-9]+$/i.test(nameFromUrl) ? nameFromUrl : "dropped-image.png";
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Could not fetch image.");
+    const blob = await response.blob();
+    const type = blob.type.startsWith("image/") ? blob.type : "image/png";
+    return new File([blob], fileName, { type });
+  } catch {
+    const image = await loadImage(url);
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth || image.width;
+    canvas.height = image.naturalHeight || image.height;
+    canvas.getContext("2d").drawImage(image, 0, 0);
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((result) => {
+        if (result) resolve(result);
+        else reject(new Error("Could not read that image."));
+      }, "image/png");
+    });
+    return new File([blob], fileName.replace(/\.[^.]+$/, "") + ".png", { type: "image/png" });
+  }
 }
 
 function setDropActive(active) {
@@ -124,37 +209,49 @@ function setDropActive(active) {
 }
 
 function handleWindowDragEnter(event) {
-  if (!dataTransferHasFiles(event)) return;
+  event.preventDefault();
   dragDepth += 1;
   setDropActive(true);
 }
 
 function handleWindowDragOver(event) {
-  if (!dataTransferHasFiles(event)) return;
   event.preventDefault();
-  event.dataTransfer.dropEffect = "copy";
+  if (event.dataTransfer) {
+    try {
+      event.dataTransfer.dropEffect = "copy";
+    } catch {
+      // Some browsers reject dropEffect changes during OS file drags.
+    }
+  }
   setDropActive(true);
 }
 
-function handleWindowDragLeave() {
+function handleWindowDragLeave(event) {
   dragDepth = Math.max(0, dragDepth - 1);
-  if (dragDepth === 0) setDropActive(false);
+  if (dragDepth === 0 || !event.relatedTarget) setDropActive(false);
+  if (!event.relatedTarget) dragDepth = 0;
 }
 
-function handleWindowDrop(event) {
-  const hasFiles = dataTransferHasFiles(event);
+async function handleWindowDrop(event) {
   event.preventDefault();
+  event.stopPropagation();
   dragDepth = 0;
   setDropActive(false);
-  if (!hasFiles) return;
 
-  const file = getDroppedImageFile(event.dataTransfer);
-  if (!file) {
-    setStatus("Please drop an image file (PNG, JPG, WEBP, or GIF).", true);
-    return;
+  try {
+    const file =
+      getDroppedImageFile(event.dataTransfer) || (await getDroppedImageFromUri(event.dataTransfer));
+    if (!file) {
+      if (dataTransferHasFiles(event) || isDroppablePayload(event)) {
+        setStatus("Please drop an image file (PNG, JPG, WEBP, or GIF).", true);
+      }
+      return;
+    }
+    await processImageFile(file);
+  } catch (error) {
+    console.error(error);
+    setStatus(error.message || "Could not use that dropped image.", true);
   }
-
-  processImageFile(file);
 }
 
 function loadImage(src) {
