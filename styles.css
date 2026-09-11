@@ -27,17 +27,23 @@
 
 html {
   color-scheme: light;
+  max-width: 100%;
   overflow-x: hidden;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  max-width: 100%;
   font-family: var(--font-body);
   font-weight: 500;
   color: var(--ink);
   background: #3d3228;
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   padding-left: env(safe-area-inset-left, 0);
   padding-right: env(safe-area-inset-right, 0);
@@ -112,13 +118,27 @@ body {
 }
 
 .page {
-  width: min(780px, calc(100% - 2rem));
+  width: 100%;
+  max-width: 780px;
+  min-width: 0;
   margin: 0 auto;
-  padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(2rem, 5vw, 3.5rem);
+  padding: clamp(1.5rem, 4vw, 3rem) 1rem clamp(2rem, 5vw, 3.5rem);
 }
 
 .page--docs {
-  width: min(820px, calc(100% - 2rem));
+  max-width: 820px;
+}
+
+main,
+.docs,
+.doc-section,
+.diagram,
+.file-tree,
+.fn-list,
+.flow-steps,
+.palette-sheet {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .header {
@@ -380,6 +400,7 @@ body {
   display: grid;
   grid-template-columns: 3.25rem minmax(0, 1fr);
   align-items: stretch;
+  min-width: 0;
   border-top: 1px solid rgba(42, 33, 24, 0.12);
 }
 
@@ -439,6 +460,7 @@ body {
   display: grid;
   grid-template-columns: repeat(var(--swatch-count, 5), minmax(0, 1fr));
   gap: 0;
+  min-width: 0;
   min-height: 52px;
   padding: 0;
   border: 0;
@@ -610,6 +632,10 @@ body {
 }
 
 .toc a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   font-family: var(--font-note);
   font-size: 1rem;
   font-weight: 600;
@@ -643,6 +669,7 @@ body {
   font-weight: 400;
   font-style: italic;
   line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .doc-section h3 {
@@ -718,6 +745,7 @@ body {
   font-weight: 700;
   font-style: normal;
   color: var(--ink);
+  overflow-wrap: anywhere;
 }
 
 .file-tree__item span {
@@ -744,6 +772,7 @@ body {
   font-style: italic;
   font-size: 1.15rem;
   color: var(--ink);
+  overflow-wrap: anywhere;
 }
 
 .fn-list dt code {
@@ -878,7 +907,6 @@ body {
   max-width: 100%;
   height: auto;
   color: var(--ink);
-  overflow: hidden;
 }
 
 .diagram svg path,
@@ -887,10 +915,6 @@ body {
 .diagram svg rect,
 .diagram svg circle {
   vector-effect: non-scaling-stroke;
-}
-
-.diagram--wide svg {
-  min-width: 560px;
 }
 
 .diagram figcaption {
@@ -977,10 +1001,6 @@ body {
     opacity: 0.14;
     width: min(110px, 14vw);
   }
-
-  .diagram--wide svg {
-    min-width: 520px;
-  }
 }
 
 /* Tablets and large phones */
@@ -991,7 +1011,7 @@ body {
 
   .page,
   .page--docs {
-    width: calc(100% - 1.5rem);
+    padding-inline: 0.75rem;
     padding-bottom: 2.5rem;
   }
 
@@ -1020,14 +1040,12 @@ body {
 
   .swatches {
     min-height: 46px;
-    overflow-x: auto;
-    grid-template-columns: repeat(var(--swatch-count, 5), minmax(2.4rem, 1fr));
-    scrollbar-width: thin;
+    min-width: 0;
   }
 
   .swatch {
     min-height: 46px;
-    min-width: 2.4rem;
+    min-width: 0;
   }
 
   .swatch:hover,
@@ -1070,13 +1088,9 @@ body {
   }
 
   .diagram {
-    margin-left: -0.25rem;
-    margin-right: -0.25rem;
+    margin-left: 0;
+    margin-right: 0;
     padding: 0.75rem 0.5rem 0.7rem;
-  }
-
-  .diagram--wide svg {
-    min-width: 540px;
   }
 
   .diagram figcaption {
@@ -1093,7 +1107,7 @@ body {
 @media (max-width: 480px) {
   .page,
   .page--docs {
-    width: calc(100% - 1rem);
+    padding-inline: 0.75rem;
   }
 
   .site-nav {
@@ -1123,12 +1137,12 @@ body {
   }
 
   .swatches {
-    grid-template-columns: repeat(var(--swatch-count, 5), minmax(2.15rem, 1fr));
+    min-height: 42px;
   }
 
   .swatch {
-    min-width: 2.15rem;
     min-height: 42px;
+    min-width: 0;
   }
 
   .swatch__hex {
@@ -1168,11 +1182,11 @@ body {
   }
 
   .swatches {
-    grid-template-columns: repeat(var(--swatch-count, 5), minmax(1.9rem, 1fr));
+    min-height: 40px;
   }
 
   .swatch {
-    min-width: 1.9rem;
+    min-width: 0;
   }
 
   .swatch__hex {
@@ -1188,11 +1202,13 @@ body {
 /* Wide screens: give the studio a bit more room */
 @media (min-width: 1100px) {
   .page {
-    width: min(860px, calc(100% - 3rem));
+    max-width: 860px;
+    padding-inline: 1.5rem;
   }
 
   .page--docs {
-    width: min(900px, calc(100% - 3rem));
+    max-width: 900px;
+    padding-inline: 1.5rem;
   }
 
   .sketch-ornament--left {
