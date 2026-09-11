@@ -7,6 +7,7 @@ const ALPHA_THRESHOLD = 128;
 
 const form = document.getElementById("palette-form");
 const imageInput = document.getElementById("image-input");
+const dropZone = document.getElementById("drop-zone");
 const fileNameEl = document.getElementById("file-name");
 const previewSection = document.getElementById("preview-section");
 const previewImage = document.getElementById("preview-image");
@@ -20,18 +21,40 @@ let currentPalettes = [];
 let sourceFileName = "image";
 /** @type {string | null} */
 let previewObjectUrl = null;
+let dragDepth = 0;
 
 imageInput.addEventListener("change", handleImageChange);
-downloadAllBtn.addEventListener("click", () => {
+downloadAllBtn.addEventListener("click", async () => {
   if (!currentPalettes.length) return;
-  downloadPaletteImage(currentPalettes, `${slugify(sourceFileName)}-all-palettes.png`);
-  setStatus("All palettes saved as an image.");
+  const result = await downloadPaletteImage(
+    currentPalettes,
+    `${slugify(sourceFileName)}-all-palettes.png`
+  );
+  announceSaveResult(result, "All palettes saved as an image.");
 });
 
-async function handleImageChange(event) {
+document.addEventListener("dragenter", handleWindowDragEnter);
+document.addEventListener("dragover", handleWindowDragOver);
+document.addEventListener("dragleave", handleWindowDragLeave);
+document.addEventListener("drop", handleWindowDrop);
+
+function handleImageChange(event) {
   const file = event.target.files?.[0];
   if (!file) return;
+  processImageFile(file);
+}
 
+/**
+ * Shared path for file-picker and drag-and-drop input.
+ * @param {File} file
+ */
+async function processImageFile(file) {
+  if (!isImageFile(file)) {
+    setStatus("Please choose an image file (PNG, JPG, WEBP, or GIF).", true);
+    return;
+  }
+
+  syncFileInput(file);
   clearStatus();
   sourceFileName = file.name.replace(/\.[^.]+$/, "") || "image";
   fileNameEl.hidden = false;
@@ -67,6 +90,71 @@ async function handleImageChange(event) {
     previewImage.removeAttribute("src");
     setStatus(error.message || "Could not process that image.", true);
   }
+}
+
+function isImageFile(file) {
+  if (!file) return false;
+  if (file.type.startsWith("image/")) return true;
+  return /\.(png|jpe?g|gif|webp|bmp|avif|heic|heif|tif{1,2})$/i.test(file.name);
+}
+
+function syncFileInput(file) {
+  if (imageInput.files?.[0] === file) return;
+  try {
+    const transfer = new DataTransfer();
+    transfer.items.add(file);
+    imageInput.files = transfer.files;
+  } catch {
+    // FileList assignment is not available in every browser; the picker still works.
+  }
+}
+
+function dataTransferHasFiles(event) {
+  return Boolean(event.dataTransfer?.types?.includes("Files"));
+}
+
+function getDroppedImageFile(dataTransfer) {
+  if (!dataTransfer) return null;
+  const files = [...(dataTransfer.files || [])];
+  return files.find(isImageFile) || null;
+}
+
+function setDropActive(active) {
+  dropZone.classList.toggle("is-dragover", active);
+}
+
+function handleWindowDragEnter(event) {
+  if (!dataTransferHasFiles(event)) return;
+  dragDepth += 1;
+  setDropActive(true);
+}
+
+function handleWindowDragOver(event) {
+  if (!dataTransferHasFiles(event)) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "copy";
+  setDropActive(true);
+}
+
+function handleWindowDragLeave() {
+  dragDepth = Math.max(0, dragDepth - 1);
+  if (dragDepth === 0) setDropActive(false);
+}
+
+function handleWindowDrop(event) {
+  const hasFiles = dataTransferHasFiles(event);
+  event.preventDefault();
+  dragDepth = 0;
+  setDropActive(false);
+  if (!hasFiles) return;
+
+  const file = getDroppedImageFile(event.dataTransfer);
+  if (!file) {
+    setStatus("Please drop an image file (PNG, JPG, WEBP, or GIF).", true);
+    return;
+  }
+
+  processImageFile(file);
 }
 
 function loadImage(src) {
@@ -132,9 +220,12 @@ function renderPalettes(pixels) {
     downloadBtn.textContent = "↓";
     downloadBtn.title = `Download ${size}-color palette`;
     downloadBtn.setAttribute("aria-label", `Download ${size}-color palette`);
-    downloadBtn.addEventListener("click", () => {
-      downloadPaletteImage([{ size, colors }], `${slugify(sourceFileName)}-${size}-colors.png`);
-      setStatus(`${size}-color palette saved as an image.`);
+    downloadBtn.addEventListener("click", async () => {
+      const result = await downloadPaletteImage(
+        [{ size, colors }],
+        `${slugify(sourceFileName)}-${size}-colors.png`
+      );
+      announceSaveResult(result, `${size}-color palette saved as an image.`);
     });
 
     meta.append(heading, downloadBtn);
@@ -191,8 +282,9 @@ async function copyHex(hex, button, label) {
  * Render one or more palettes onto a parchment-styled canvas and download as PNG.
  * @param {{ size: number, colors: number[][] }[]} palettes
  * @param {string} filename
+ * @returns {Promise<"shared" | "opened" | "downloaded" | "cancelled" | "failed">}
  */
-function downloadPaletteImage(palettes, filename) {
+async function downloadPaletteImage(palettes, filename) {
   const width = 1000;
   const margin = 48;
   const titleBlock = 110;
@@ -272,10 +364,96 @@ function downloadPaletteImage(palettes, filename) {
   ctx.font = "600 15px 'Source Sans 3', 'Segoe UI', sans-serif";
   ctx.fillText("Extracted by k-means · folio of the browser studio", width / 2, height - 20);
 
+  try {
+    return await savePngFromCanvas(canvas, filename);
+  } catch (error) {
+    console.error(error);
+    return "failed";
+  }
+}
+
+/**
+ * iPad/iPhone Safari ignores <a download>. Share the PNG when possible;
+ * otherwise open it in a new tab so it can be saved with tap-and-hold.
+ * Desktop keeps a normal file download.
+ * @returns {Promise<"shared" | "opened" | "downloaded" | "cancelled" | "failed">}
+ */
+async function savePngFromCanvas(canvas, filename) {
+  const dataUrl = canvas.toDataURL("image/png");
+  const blob = dataUrlToBlob(dataUrl);
+  const file = new File([blob], filename, { type: "image/png" });
+
+  if (isAppleTouchDevice()) {
+    if (canShareFiles(file)) {
+      try {
+        await navigator.share({ files: [file], title: filename });
+        return "shared";
+      } catch (error) {
+        if (error?.name === "AbortError") return "cancelled";
+      }
+    }
+
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.target = "_blank";
+    link.rel = "noopener";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    return "opened";
+  }
+
+  const objectUrl = URL.createObjectURL(blob);
   const link = document.createElement("a");
+  link.href = objectUrl;
   link.download = filename;
-  link.href = canvas.toDataURL("image/png");
+  document.body.appendChild(link);
   link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
+  return "downloaded";
+}
+
+function dataUrlToBlob(dataUrl) {
+  const comma = dataUrl.indexOf(",");
+  const binary = atob(dataUrl.slice(comma + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: "image/png" });
+}
+
+function isAppleTouchDevice() {
+  const ua = navigator.userAgent || "";
+  if (/iPad|iPhone|iPod/.test(ua)) return true;
+  // iPadOS 13+ reports as Macintosh with a touch screen.
+  return navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+}
+
+function canShareFiles(file) {
+  try {
+    return Boolean(navigator.canShare?.({ files: [file] }));
+  } catch {
+    return false;
+  }
+}
+
+function announceSaveResult(result, downloadedMessage) {
+  if (result === "cancelled") return;
+  if (result === "shared") {
+    setStatus("Use the share sheet to save the palette image.");
+    return;
+  }
+  if (result === "opened") {
+    setStatus("Image opened in a new tab — tap and hold to save it.");
+    return;
+  }
+  if (result === "failed") {
+    setStatus("Could not save the palette image.", true);
+    return;
+  }
+  setStatus(downloadedMessage);
 }
 
 function drawParchmentBackground(ctx, width, height) {

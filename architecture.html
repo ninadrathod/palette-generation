@@ -476,7 +476,7 @@
           <div class="file-tree" role="list">
             <div class="file-tree__item" role="listitem">
               <code>index.html</code>
-              <span>The studio desk — upload form, preview, swatches, download buttons.</span>
+              <span>The studio desk — upload or drop an image, preview, swatches, download buttons.</span>
             </div>
             <div class="file-tree__item" role="listitem">
               <code>architecture.html</code>
@@ -635,7 +635,8 @@
             <div>
               <dt><code>downloadPaletteImage</code></dt>
               <dd>
-                Paints one or all palettes onto a parchment-styled canvas and saves a PNG download.
+                Paints one or all palettes onto a parchment-styled canvas and saves a PNG. On iPad
+                and iPhone, the share sheet is used because Safari ignores the download attribute.
               </dd>
             </div>
           </dl>
