@@ -7,104 +7,376 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=IM+Fell+English:ital@0;1&family=Source+Sans+3:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=Fredoka:wght@500;600&family=IM+Fell+English:ital@0;1&family=Source+Sans+3:ital,wght@0,500;0,600;0,700;1,500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=6" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="parchment" aria-hidden="true"></div>
-    <svg class="sketch-ornament sketch-ornament--left" viewBox="0 0 160 280" aria-hidden="true">
-      <circle cx="78" cy="90" r="52" fill="none" stroke="currentColor" stroke-width="1.1" />
-      <rect x="36" y="38" width="84" height="104" fill="none" stroke="currentColor" stroke-width="0.9" />
-      <line x1="78" y1="28" x2="78" y2="152" stroke="currentColor" stroke-width="0.7" />
-      <line x1="26" y1="90" x2="130" y2="90" stroke="currentColor" stroke-width="0.7" />
-      <path
-        d="M48 188c8-18 22-28 38-28s28 12 34 30c-10 8-22 14-36 14s-26-6-36-16z"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1"
-      />
-      <path d="M62 210c6 18 14 34 18 52" fill="none" stroke="currentColor" stroke-width="0.9" />
-      <path d="M96 210c-4 16-8 34-6 52" fill="none" stroke="currentColor" stroke-width="0.9" />
-      <path d="M40 170c-8 10-14 24-12 38" fill="none" stroke="currentColor" stroke-width="0.8" />
-      <path d="M120 168c10 12 14 26 10 40" fill="none" stroke="currentColor" stroke-width="0.8" />
-    </svg>
-    <svg class="sketch-ornament sketch-ornament--right" viewBox="0 0 140 240" aria-hidden="true">
-      <path
-        d="M20 40c30 8 48 34 52 70 4 30-8 58-34 74"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.1"
-      />
-      <path
-        d="M40 48c22 10 34 30 36 54 2 28-10 50-30 64"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="0.8"
-        opacity="0.7"
-      />
-      <path d="M72 30c8 18 10 40 4 62" fill="none" stroke="currentColor" stroke-width="0.9" />
-      <circle cx="74" cy="28" r="4" fill="none" stroke="currentColor" stroke-width="0.9" />
-      <path d="M18 170h90M28 186h70M38 202h50" stroke="currentColor" stroke-width="0.7" />
-      <path
-        d="M100 120c12-8 24-6 34 4M104 136c14-4 24 2 30 14"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="0.8"
-      />
-    </svg>
+    <div class="grid-veil" aria-hidden="true"></div>
+
+    <div class="marginalia-mirror marginalia-mirror--left" aria-hidden="true">
+      <span>misura · proporzione · luce</span>
+      <span>studio de' colori, f. 1r</span>
+    </div>
+    <div class="marginalia-mirror marginalia-mirror--right" aria-hidden="true">
+      <span>ogni pigmento ha il suo luogo</span>
+      <span>r · g · b — tre assi</span>
+    </div>
 
     <div class="page">
-      <header class="header">
-        <p class="folio">Folio I · Studio Notes</p>
-        <h1 class="brand">Codex of Colour</h1>
-        <p class="tagline">
-          From the likeness of an image, extract the pigments — studies of 3, 5, 7, and 10 hues,
-          after the manner of the old masters’ notebooks.
-        </p>
-        <div class="rule" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
+      <nav class="tabbar" aria-label="Sections">
+        <a class="tabbar__brand" href="#studio" data-tab-link="studio">Codex <em>of</em> Colour</a>
+        <div class="tabbar__tabs" role="tablist" aria-label="Codex of Colour">
+          <button type="button" role="tab" id="tab-studio" data-tab="studio" aria-controls="panel-studio" aria-selected="true">
+            <span class="tabbar__num">I</span> Studio
+          </button>
+          <button type="button" role="tab" id="tab-learn" data-tab="how-it-works" aria-controls="panel-learn" aria-selected="false" tabindex="-1">
+            <span class="tabbar__num">II</span> How it works
+          </button>
+          <span class="tabbar__glider" aria-hidden="true"></span>
         </div>
+      </nav>
+
+      <div id="panel-studio" class="tab-panel" role="tabpanel" aria-labelledby="tab-studio">
+      <header class="header hero" aria-labelledby="brand-title">
+        <div class="header__text">
+          <p class="folio">
+            <span class="hud-chip">Codex · F.01</span>
+            <span class="folio__sep" aria-hidden="true"></span>
+            <span>Studio of pigments</span>
+          </p>
+          <h1 class="brand" id="brand-title">Codex <em>of</em> Colour</h1>
+          <p class="tagline">
+            Put an image on the desk and the instrument will measure its pigments, giving you
+            studies of 3, 5, 7, and 10 hues in the manner of the old masters’ notebooks.
+          </p>
+          <dl class="hud-readout" aria-label="Instrument settings">
+            <div><dt>Method</dt><dd>k-means</dd></div>
+            <div><dt>Runs</dt><dd>3 × 12</dd></div>
+            <div><dt>Space</dt><dd>sRGB</dd></div>
+          </dl>
+          <a class="hero__cue" href="#how-it-works" data-tab-link="how-it-works">
+            <span>How it works</span>
+            <span class="hero__cue-arrow" aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <figure class="instrument" aria-label="Animation: colours lift out of a picture and line up as a palette">
+          <span class="bracket bracket--tl"></span>
+          <span class="bracket bracket--tr"></span>
+          <span class="bracket bracket--bl"></span>
+          <span class="bracket bracket--br"></span>
+          <canvas id="hero-canvas" class="instrument__canvas"></canvas>
+          <figcaption class="instrument__caption">Fig. 1 · A picture gives up its colours</figcaption>
+        </figure>
       </header>
 
-      <main>
+
+      <main id="workbench" class="workbench" aria-labelledby="workbench-title">
+        <div class="workbench__bar">
+          <span class="workbench__mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 3v18M3 12h18" /><circle cx="12" cy="12" r="3.5" /></svg>
+          </span>
+          <div class="workbench__heading">
+            <span class="workbench__folio">Folio I</span>
+            <h2 class="workbench__title" id="workbench-title">The Workbench</h2>
+          </div>
+          <span class="workbench__lamp"><span aria-hidden="true"></span>Ready</span>
+        </div>
+
+        <div class="workbench__body">
         <form id="palette-form" class="upload-form" aria-label="Upload an image">
-          <label class="file-label" for="image-input" id="drop-zone">
-            <span class="file-label__mark" aria-hidden="true">❧</span>
-            <span class="file-label__title">Place an image upon the desk</span>
-            <span class="file-label__hint">PNG, JPG, WEBP, or GIF — drop an image here, or choose one from your files</span>
-            <input
-              id="image-input"
-              class="file-label__input"
-              name="image"
-              type="file"
-              accept="image/*"
-              required
-            />
-          </label>
+          <div class="dropzone-stage">
+            <label class="file-label" for="image-input" id="drop-zone">
+              <span class="file-label__icon" aria-hidden="true">
+                <svg viewBox="0 0 64 64">
+                  <rect class="icon-back" x="14" y="8" width="38" height="30" rx="4" />
+                  <rect class="icon-photo" x="8" y="16" width="40" height="32" rx="4" />
+                  <circle class="icon-sun" cx="36" cy="25" r="4.5" />
+                  <path class="icon-hill" d="M8 44l12-13 9 9 6-6 13 14v0.5a4 4 0 0 1-4 3.5H12a4 4 0 0 1-4-4z" />
+                  <circle class="icon-badge" cx="49" cy="47" r="11" />
+                  <path class="icon-arrow" d="M49 53V41M44 46l5-5 5 5" />
+                </svg>
+              </span>
+              <span class="file-label__copy">
+                <span class="file-label__title">Drop an image here</span>
+                <span class="file-label__hint">PNG, JPG, WEBP or GIF · you can also drop it anywhere on the page</span>
+              </span>
+              <span class="file-label__button" aria-hidden="true">Choose image</span>
+              <input
+                id="image-input"
+                class="file-label__input"
+                name="image"
+                type="file"
+                accept="image/*"
+                required
+              />
+            </label>
+            <span class="dropzone-shadow" aria-hidden="true"></span>
+          </div>
           <p id="file-name" class="file-name" hidden></p>
         </form>
 
         <section id="preview-section" class="preview-section" hidden>
-          <p class="section-label">Study · Source</p>
-          <figure class="preview-frame">
+          <p class="section-label"><span>02</span> Study · Source</p>
+          <figure class="preview-frame" id="preview-frame">
             <img id="preview-image" class="preview-image" alt="Uploaded image preview" />
+            <span class="scan-beam" aria-hidden="true"></span>
+            <figcaption id="preview-meta" class="preview-meta"></figcaption>
           </figure>
         </section>
 
-        <div id="download-all-wrap" class="download-all-wrap" hidden>
-          <button type="button" id="download-all" class="ink-button">
-            Download all palettes
-          </button>
-        </div>
+        <section id="cubus" class="cubus" hidden>
+          <div class="cubus__head">
+            <p class="section-label"><span>03</span> Cubus Colorum</p>
+            <div class="cubus__tabs" role="group" aria-label="Show palette in colour space">
+              <button type="button" data-k="3">III</button>
+              <button type="button" data-k="5" class="is-active">V</button>
+              <button type="button" data-k="7">VII</button>
+              <button type="button" data-k="10">X</button>
+            </div>
+          </div>
+          <figure class="cubus__frame">
+            <canvas id="cubus-canvas" class="cubus__canvas"></canvas>
+            <figcaption class="cubus__caption">
+              Each speck is a pixel placed by its red, green, and blue. The orbs are the measured
+              pigments. Drag to turn the cube.
+            </figcaption>
+          </figure>
+        </section>
 
         <section id="palettes" class="palettes" aria-live="polite"></section>
 
+        <div id="download-all-wrap" class="download-all-wrap" hidden>
+          <button type="button" id="download-all" class="export-button">
+            <span class="export-button__face">
+              <span class="export-button__icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48">
+                  <circle class="export-button__ring" cx="24" cy="24" r="20" />
+                  <circle cx="24" cy="24" r="14" />
+                  <path class="export-button__arrow" d="M24 14v17M17 25l7 7 7-7M16 35h16" />
+                </svg>
+              </span>
+              <span class="export-button__text">
+                <span class="export-button__label">Download all palettes</span>
+                <span class="export-button__meta">PNG · 4 studies<span class="export-button__meta-extra"> · III V VII X</span></span>
+              </span>
+              <span id="export-swatches" class="export-button__swatches" aria-hidden="true"></span>
+            </span>
+          </button>
+        </div>
+
         <p id="status" class="status" role="status" aria-live="polite"></p>
+        </div>
       </main>
+      </div>
+
+      <section id="panel-learn" class="tab-panel learn" role="tabpanel" aria-labelledby="tab-learn" hidden>
+        <header class="learn__head">
+          <p class="folio">
+            <span class="hud-chip">Codex · F.02</span>
+            <span class="folio__sep" aria-hidden="true"></span>
+            <span>How it works</span>
+          </p>
+          <h2 class="learn__title">How an image becomes a palette</h2>
+          <p class="learn__lede">
+            Five steps, all in your browser. Every figure is live, so press, drag, and adjust as you
+            read.
+          </p>
+          <p class="learn__source">
+            <span class="learn__source-dot" aria-hidden="true"></span>
+            Studying <strong id="learn-source">a demo image</strong>
+            <span id="learn-source-hint">· add your own image in the Studio and every figure will use it</span>
+          </p>
+        </header>
+
+        <nav class="pipeline" aria-label="Steps">
+          <ol>
+            <li><a href="#lesson-sample" data-lesson="lesson-sample"><span>1</span>Sample</a></li>
+            <li><a href="#lesson-distance" data-lesson="lesson-distance"><span>2</span>Measure</a></li>
+            <li><a href="#lesson-kmeans" data-lesson="lesson-kmeans"><span>3</span>Cluster</a></li>
+            <li><a href="#lesson-runs" data-lesson="lesson-runs"><span>4</span>Compare</a></li>
+            <li><a href="#lesson-tidy" data-lesson="lesson-tidy"><span>5</span>Tidy</a></li>
+          </ol>
+        </nav>
+
+        <!-- 1 · Sample -->
+        <article class="lesson" id="lesson-sample">
+          <div class="lesson__text">
+            <p class="lesson__num">Step 1 · Sample</p>
+            <h3>Shrink it, then read every pixel</h3>
+            <p>
+              The image is scaled down until its longest side is at most <b>120&nbsp;px</b>. Pixels
+              that are more than half transparent are skipped.
+            </p>
+            <p>
+              Each remaining pixel is three numbers from 0 to 255: <b class="ch-r">red</b>,
+              <b class="ch-g">green</b> and <b class="ch-b">blue</b>. Use those as coordinates and
+              every pixel becomes a point inside a cube.
+            </p>
+            <dl class="facts">
+              <div><dt>Longest side</dt><dd>120 px</dd></div>
+              <div><dt>Points to sort</dt><dd id="fact-points">—</dd></div>
+            </dl>
+          </div>
+          <figure class="lesson__fig">
+            <div class="fig-pair">
+              <canvas id="sample-grid" class="fig-canvas fig-canvas--grid" aria-label="Image as a pixel grid"></canvas>
+              <canvas id="sample-cube" class="fig-canvas fig-canvas--drag" aria-label="Pixels plotted in the colour cube"></canvas>
+            </div>
+            <div class="fig-controls">
+              <label class="fig-range">
+                <span>Grid</span>
+                <input type="range" id="sample-res" min="6" max="40" value="16" />
+                <output id="sample-res-out">16 px</output>
+              </label>
+              <output class="fig-readout" id="sample-readout">Hover a pixel</output>
+            </div>
+            <figcaption>
+              <b>Fig. 1</b> Each square on the left is one pixel, and its dot on the right sits at its
+              red, green and blue values. Hover a pixel to find it. Drag the cube to turn it.
+            </figcaption>
+          </figure>
+        </article>
+
+        <!-- 2 · Measure -->
+        <article class="lesson" id="lesson-distance">
+          <div class="lesson__text">
+            <p class="lesson__num">Step 2 · Measure</p>
+            <h3>Similar colours are close points</h3>
+            <p>To compare two colours, measure the straight line between their points:</p>
+            <p class="formula">d = √(ΔR² + ΔG² + ΔB²)</p>
+            <p>
+              The three coloured legs in the figure are ΔR, ΔG and ΔB. The dashed line is the
+              distance. It runs from 0 (identical) to about 441 (black to white).
+            </p>
+          </div>
+          <figure class="lesson__fig">
+            <canvas id="distance-cube" class="fig-canvas fig-canvas--drag" aria-label="Distance between two colours"></canvas>
+            <div class="fig-controls">
+              <label class="fig-color"><input type="color" id="dist-a" value="#d9a441" /><span>A</span></label>
+              <label class="fig-color"><input type="color" id="dist-b" value="#2f6f8a" /><span>B</span></label>
+              <button type="button" class="fig-btn" id="dist-random">Two from the image</button>
+            </div>
+            <div class="meter" aria-hidden="true">
+              <span class="meter__fill" id="dist-meter"></span>
+              <span class="meter__mark" style="--at: 6.34%"><i>28</i></span>
+            </div>
+            <output class="fig-readout fig-readout--block" id="dist-readout"></output>
+            <figcaption>
+              <b>Fig. 2</b> Pick any two colours. The mark at 28 is where the studio treats two
+              colours as the same one (step 5).
+            </figcaption>
+          </figure>
+        </article>
+
+        <!-- 3 · Cluster -->
+        <article class="lesson" id="lesson-kmeans">
+          <div class="lesson__text">
+            <p class="lesson__num">Step 3 · Cluster</p>
+            <h3>k-means finds the centres of the crowds</h3>
+            <p>To get a palette of <i>k</i> colours, the studio looks for <i>k</i> centres, each sitting in the middle of a crowd of pixels:</p>
+            <ol class="steps">
+              <li data-step="seed"><b>Seed</b> Start at a random pixel. Each next centre is the pixel <i>farthest</i> from the centres so far.</li>
+              <li data-step="assign"><b>Assign</b> Every pixel joins its nearest centre.</li>
+              <li data-step="update"><b>Update</b> Each centre moves to the average colour of its pixels.</li>
+              <li data-step="repeat"><b>Repeat</b> Assign and update again until the centres stop moving, at most 12 rounds.</li>
+            </ol>
+            <p>The centres where it settles are the palette.</p>
+          </div>
+          <figure class="lesson__fig">
+            <canvas id="kmeans-cube" class="fig-canvas fig-canvas--tall fig-canvas--drag" aria-label="k-means in the colour cube"></canvas>
+            <div class="fig-controls">
+              <div class="fig-seg" role="group" aria-label="Number of colours">
+                <button type="button" data-k="3">3</button>
+                <button type="button" data-k="5" class="is-active">5</button>
+                <button type="button" data-k="7">7</button>
+                <button type="button" data-k="10">10</button>
+              </div>
+              <button type="button" class="fig-btn" id="km-seed">Seed</button>
+              <button type="button" class="fig-btn" id="km-assign" disabled>Assign</button>
+              <button type="button" class="fig-btn" id="km-update" disabled>Update</button>
+              <button type="button" class="fig-btn fig-btn--solid" id="km-run">Run it all</button>
+              <button type="button" class="fig-btn fig-btn--ghost" id="km-reset">Reset</button>
+            </div>
+            <output class="fig-readout fig-readout--block" id="km-readout">Press <b>Seed</b> to place the first centres.</output>
+            <figcaption>
+              <b>Fig. 3</b> Step through it yourself, or press <i>Run it all</i>. Thin lines link
+              each pixel to its centre, and dashed trails show where the centres moved.
+            </figcaption>
+          </figure>
+        </article>
+
+        <!-- 4 · Compare -->
+        <article class="lesson" id="lesson-runs">
+          <div class="lesson__text">
+            <p class="lesson__num">Step 4 · Compare</p>
+            <h3>Try three times, keep the tightest</h3>
+            <p>
+              The first centre is random, so two runs can settle on different palettes. Each run is
+              scored by its <b>error</b>: the sum of the squared distances from every pixel to its
+              centre.
+            </p>
+            <p>Lower error means the centres fit the pixels more closely. The studio runs k-means three times and keeps the lowest.</p>
+          </div>
+          <figure class="lesson__fig">
+            <div class="runs" id="runs"></div>
+            <div class="fig-controls">
+              <button type="button" class="fig-btn fig-btn--solid" id="runs-roll">Roll three new runs</button>
+              <output class="fig-readout" id="runs-readout"></output>
+            </div>
+            <figcaption>
+              <b>Fig. 4</b> Three runs of 7 colours on the same pixels. The one marked <i>Kept</i>
+              has the lowest error.
+            </figcaption>
+          </figure>
+        </article>
+
+        <!-- 5 · Tidy -->
+        <article class="lesson" id="lesson-tidy">
+          <div class="lesson__text">
+            <p class="lesson__num">Step 5 · Tidy</p>
+            <h3>Merge twins, then sort by light</h3>
+            <p>
+              Centres closer than <b>28</b> apart are merged, so you never get two near-identical
+              swatches. The rest are sorted dark to light by luminance:
+            </p>
+            <p class="formula">L = 0.299 R + 0.587 G + 0.114 B</p>
+            <div class="lum-weights" aria-label="Luminance weights">
+              <span class="lw-r" style="--w: 29.9%">R 30%</span>
+              <span class="lw-g" style="--w: 58.7%">G 59%</span>
+              <span class="lw-b" style="--w: 11.4%">B 11%</span>
+            </div>
+            <p>Green counts most because our eyes are most sensitive to it. Finally the swatches are drawn: click one to copy its hex code, or save the palette as a PNG.</p>
+          </div>
+          <figure class="lesson__fig">
+            <div class="tidy" id="tidy"></div>
+            <div class="fig-controls">
+              <label class="fig-range">
+                <span>Merge below</span>
+                <input type="range" id="tidy-threshold" min="0" max="90" value="28" />
+                <output id="tidy-threshold-out">28</output>
+              </label>
+              <button type="button" class="fig-btn" id="tidy-sort" aria-pressed="false">Sort by light</button>
+            </div>
+            <output class="fig-readout fig-readout--block" id="tidy-readout"></output>
+            <figcaption>
+              <b>Fig. 5</b> The ten raw centres from k-means, in the order they were found. The bars
+              show each one's luminance. Raise the merge distance to see twins fold together.
+            </figcaption>
+          </figure>
+        </article>
+      </section>
 
       <footer class="footer">
         <p>Drawn in the browser · k-means as the measuring compass</p>
@@ -112,6 +384,8 @@
       </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=3"></script>
+    <script src="learn.js?v=3"></script>
+    <script type="module" src="scene.js?v=4"></script>
   </body>
 </html>

@@ -4,9 +4,11 @@ Extract 3, 5, 7, and 10 color palettes from an image with k-means (runs in the b
 
 | File | Role |
 |------|------|
-| `index.html` | Studio — upload, swatches, downloads |
+| `index.html` | Two tabs: Studio (upload, swatches, downloads) and How it works |
 | `styles.css` | Styles |
-| `script.js` | Extraction & export |
+| `script.js` | Extraction, export & tabs |
+| `scene.js` | 3D figures (Three.js): header solid, colour cube |
+| `learn.js` | Interactive "How it works" figures, reusing `script.js` |
 
 ```bash
 npx serve .

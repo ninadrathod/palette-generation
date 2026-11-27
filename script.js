@@ -15,6 +15,17 @@ const palettesEl = document.getElementById("palettes");
 const statusEl = document.getElementById("status");
 const downloadAllWrap = document.getElementById("download-all-wrap");
 const downloadAllBtn = document.getElementById("download-all");
+const previewFrame = document.getElementById("preview-frame");
+const previewMeta = document.getElementById("preview-meta");
+const lampEl = document.querySelector(".workbench__lamp");
+
+function setLamp(text, done) {
+  if (!lampEl) return;
+  lampEl.lastChild.textContent = text;
+  lampEl.classList.toggle("is-done", done);
+}
+
+const ROMAN = { 3: "III", 5: "V", 7: "VII", 10: "X" };
 
 /** @type {{ size: number, colors: number[][] }[]} */
 let currentPalettes = [];
@@ -63,6 +74,7 @@ async function processImageFile(file) {
   lastProcessKey = processKey;
   lastProcessAt = now;
 
+  showTab("studio");
   syncFileInput(file);
   clearStatus();
   sourceFileName = file.name.replace(/\.[^.]+$/, "") || "image";
@@ -82,14 +94,20 @@ async function processImageFile(file) {
 
     previewImage.src = previewObjectUrl;
     previewSection.hidden = false;
+    restartScan();
 
     const pixels = samplePixels(image);
     if (pixels.length === 0) {
       throw new Error("No opaque pixels found in this image.");
     }
 
+    previewMeta.textContent = `${image.naturalWidth || image.width} × ${
+      image.naturalHeight || image.height
+    } px · ${pixels.length.toLocaleString()} samples`;
+
     renderPalettes(pixels);
-    setStatus("Click a swatch to copy · ↓ downloads one row · or save all below.");
+    publishPalettes(pixels, image);
+    setStatus("Click a swatch to copy · ↓ downloads one row · or save them all above.");
   } catch (error) {
     console.error(error);
     currentPalettes = [];
@@ -97,8 +115,25 @@ async function processImageFile(file) {
     downloadAllWrap.hidden = true;
     previewSection.hidden = true;
     previewImage.removeAttribute("src");
+    window.__codexLast = null;
+    setLamp("Ready", false);
+    window.dispatchEvent(new CustomEvent("codex:clear"));
     setStatus(error.message || "Could not process that image.", true);
   }
+}
+
+function restartScan() {
+  previewFrame.classList.remove("is-scanning");
+  void previewFrame.offsetWidth;
+  previewFrame.classList.add("is-scanning");
+}
+
+/** Hand the measured data to the 3D scenes (scene.js), which may load later. */
+function publishPalettes(pixels, image) {
+  const detail = { pixels, palettes: currentPalettes, image, name: sourceFileName };
+  window.__codexLast = detail;
+  setLamp("Measured", true);
+  window.dispatchEvent(new CustomEvent("codex:palettes", { detail }));
 }
 
 function isImageFile(file) {
@@ -305,7 +340,10 @@ function renderPalettes(pixels) {
 
     const heading = document.createElement("h2");
     heading.className = "palette-row__label";
-    heading.textContent = String(size);
+    heading.textContent = ROMAN[size] || String(size);
+    const count = document.createElement("span");
+    count.className = "palette-row__count";
+    count.textContent = `${size} hues`;
     heading.title =
       colors.length === size
         ? `${size}-color palette`
@@ -325,7 +363,7 @@ function renderPalettes(pixels) {
       announceSaveResult(result, `${size}-color palette saved as an image.`);
     });
 
-    meta.append(heading, downloadBtn);
+    meta.append(heading, count, downloadBtn);
 
     const swatches = document.createElement("div");
     swatches.className = "swatches";
@@ -339,6 +377,7 @@ function renderPalettes(pixels) {
       button.type = "button";
       button.className = "swatch";
       button.style.backgroundColor = hex;
+      button.style.setProperty("--c", hex);
       button.title = `Copy ${hex}`;
       button.setAttribute("aria-label", `Copy color ${hex}`);
       button.setAttribute("role", "listitem");
@@ -357,7 +396,22 @@ function renderPalettes(pixels) {
   }
 
   palettesEl.append(sheet);
+  renderExportSwatches();
   downloadAllWrap.hidden = false;
+}
+
+/** Mini strip of the 10-hue study shown on the export button. */
+function renderExportSwatches() {
+  const strip = document.getElementById("export-swatches");
+  if (!strip) return;
+  const study = currentPalettes[currentPalettes.length - 1];
+  strip.replaceChildren(
+    ...study.colors.map((color) => {
+      const chip = document.createElement("span");
+      chip.style.backgroundColor = rgbToHex(color);
+      return chip;
+    })
+  );
 }
 
 async function copyHex(hex, button, label) {
@@ -807,4 +861,60 @@ function clearStatus() {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+});
+
+
+/* ------------------------------------------------------------------ tabs */
+
+const tabButtons = [...document.querySelectorAll("[data-tab]")];
+
+function showTab(name, { updateHash = true, focus = false } = {}) {
+  const target = tabButtons.find((tab) => tab.dataset.tab === name) || tabButtons[0];
+  for (const tab of tabButtons) {
+    const active = tab === target;
+    tab.setAttribute("aria-selected", String(active));
+    tab.tabIndex = active ? 0 : -1;
+    document.getElementById(tab.getAttribute("aria-controls")).hidden = !active;
+  }
+  document.querySelector(".tabbar__tabs")?.style.setProperty(
+    "--glider-index",
+    String(tabButtons.indexOf(target))
+  );
+  if (focus) target.focus();
+  if (updateHash && location.hash !== `#${target.dataset.tab}`) {
+    history.replaceState(null, "", `#${target.dataset.tab}`);
+  }
+}
+
+tabButtons.forEach((tab, index) => {
+  tab.addEventListener("click", () => showTab(tab.dataset.tab));
+  tab.addEventListener("keydown", (event) => {
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+    if (!step) return;
+    event.preventDefault();
+    const next = tabButtons[(index + step + tabButtons.length) % tabButtons.length];
+    showTab(next.dataset.tab, { focus: true });
+  });
+});
+
+document.querySelectorAll("[data-tab-link]").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    showTab(link.dataset.tabLink);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+});
+
+const isTabName = (name) => tabButtons.some((tab) => tab.dataset.tab === name);
+
+window.addEventListener("hashchange", () => {
+  const name = location.hash.slice(1);
+  if (isTabName(name)) showTab(name, { updateHash: false });
+});
+showTab(isTabName(location.hash.slice(1)) ? location.hash.slice(1) : "studio", { updateHash: false });
+
+// Tab hashes are not anchors: always open a tab at the top of the page.
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+window.addEventListener("load", () => {
+  if (tabButtons.some((tab) => `#${tab.dataset.tab}` === location.hash)) window.scrollTo(0, 0);
 });
